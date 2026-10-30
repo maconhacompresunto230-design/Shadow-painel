@@ -1,304 +1,344 @@
 
 --========================================================
--- OLD PANEL
+-- SHADOW HUB | OLD
 -- 2024 QUALITY 1 / 2024 QUALITY 2
 --========================================================
 
 local Players = game:GetService("Players")
-local Lighting = game:GetService("Lighting")
-local UIS = game:GetService("UserInputService")
+local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local ALTURA = 40
-local RAIO_GRADE = 1400
-local ESPACO = 40
-local INTERVALO_BUSCA = 3
+local antigo = playerGui:FindFirstChild("ShadowHubOLD")
+if antigo then antigo:Destroy() end
 
 --========================================================
 -- INTERFACE
 --========================================================
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "OLD"
+gui.Name = "ShadowHubOLD"
 gui.ResetOnSpawn = false
 gui.Parent = playerGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.fromOffset(245, 190)
-main.Position = UDim2.new(0.5, -122, 0.5, -95)
-main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+main.Size = UDim2.new(0,230,0,175)
+main.Position = UDim2.new(0.5,-115,0.5,-87)
+main.BackgroundColor3 = Color3.fromRGB(8,8,8)
 main.BorderSizePixel = 0
 main.Active = true
 main.Parent = gui
 
-local mainStroke = Instance.new("UIStroke")
-mainStroke.Color = Color3.fromRGB(255, 255, 255)
-mainStroke.Thickness = 1.5
-mainStroke.Parent = main
+Instance.new("UICorner",main).CornerRadius = UDim.new(0,12)
 
-local mainCorner = Instance.new("UICorner")
-mainCorner.CornerRadius = UDim.new(0, 12)
-mainCorner.Parent = main
-
---========================================================
--- CABEÇALHO
---========================================================
-
-local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 42)
-header.BackgroundTransparency = 1
-header.Active = true
-header.Parent = main
+local outline = Instance.new("UIStroke",main)
+outline.Color = Color3.new(1,1,1)
+outline.Thickness = 1.5
 
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -75, 1, 0)
-title.Position = UDim2.fromOffset(12, 0)
+title.Size = UDim2.new(1,0,0,40)
 title.BackgroundTransparency = 1
 title.Text = "OLD"
-title.TextColor3 = Color3.new(1, 1, 1)
-title.TextSize = 20
+title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = header
+title.TextSize = 20
+title.Parent = main
+
+local function criarBotao(nome,texto,posicao,pai)
+	local b = Instance.new("TextButton")
+	b.Name = nome
+	b.Size = UDim2.new(1,-30,0,42)
+	b.Position = posicao
+	b.BackgroundColor3 = Color3.fromRGB(22,22,22)
+	b.TextColor3 = Color3.new(1,1,1)
+	b.Text = texto
+	b.TextSize = 13
+	b.Font = Enum.Font.GothamSemibold
+	b.Parent = pai
+
+	Instance.new("UICorner",b).CornerRadius = UDim.new(0,7)
+
+	local s = Instance.new("UIStroke",b)
+	s.Color = Color3.fromRGB(180,180,180)
+	s.Thickness = 1
+
+	return b
+end
+
+local quality1 = criarBotao(
+	"Quality1",
+	"2024 QUALITY 1",
+	UDim2.new(0,15,0,52),
+	main
+)
+
+local quality2 = criarBotao(
+	"Quality2",
+	"2024 QUALITY 2",
+	UDim2.new(0,15,0,105),
+	main
+)
 
 local minimize = Instance.new("TextButton")
-minimize.Size = UDim2.fromOffset(30, 30)
-minimize.Position = UDim2.new(1, -38, 0, 6)
-minimize.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-minimize.Text = "-"
-minimize.TextColor3 = Color3.new(1, 1, 1)
-minimize.TextSize = 23
-minimize.Font = Enum.Font.GothamBold
-minimize.Parent = header
-
-local minCorner = Instance.new("UICorner")
-minCorner.CornerRadius = UDim.new(1, 0)
-minCorner.Parent = minimize
-
-local minStroke = Instance.new("UIStroke")
-minStroke.Color = Color3.new(1, 1, 1)
-minStroke.Parent = minimize
+minimize.Size = UDim2.new(0,30,0,27)
+minimize.Position = UDim2.new(1,-35,0,5)
+minimize.BackgroundColor3 = Color3.fromRGB(22,22,22)
+minimize.Text = "—"
+minimize.TextColor3 = Color3.new(1,1,1)
+minimize.Parent = main
 
 --========================================================
--- BOTÕES
+-- BOLA OLD
 --========================================================
 
-local function criarBotao(texto, posicao)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, -30, 0, 45)
-    button.Position = UDim2.fromOffset(15, posicao)
-    button.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
-    button.BorderSizePixel = 0
-    button.Text = texto
-    button.TextColor3 = Color3.new(1, 1, 1)
-    button.TextSize = 14
-    button.Font = Enum.Font.GothamBold
-    button.Parent = main
+local ball = Instance.new("TextButton")
+ball.Name = "OLD_Minimized"
+ball.Size = UDim2.new(0,55,0,55)
+ball.Position = UDim2.new(0.5,-27,0.5,-27)
+ball.BackgroundColor3 = Color3.fromRGB(8,8,8)
+ball.Text = "OLD"
+ball.TextColor3 = Color3.new(1,1,1)
+ball.TextSize = 15
+ball.Font = Enum.Font.GothamBold
+ball.Visible = false
+ball.Active = true
+ball.Parent = gui
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = button
+Instance.new("UICorner",ball).CornerRadius = UDim.new(1,0)
 
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.new(1, 1, 1)
-    stroke.Thickness = 1
-    stroke.Parent = button
-
-    return button
-end
-
-local quality1 = criarBotao("2024 QUALITY 1", 58)
-local quality2 = criarBotao("2024 QUALITY 2", 115)
-
---========================================================
--- EXECUTOR DE QUALIDADE
---========================================================
-
-local function aplicarQualidade(tipo)
-
-    local character = player.Character or player.CharacterAdded:Wait()
-    local hrp = character:WaitForChild("HumanoidRootPart")
-
-    local config
-
-    if tipo == 1 then
-        config = {
-            Ambient = Color3.fromRGB(190, 190, 190),
-            Outdoor = Color3.fromRGB(85, 85, 85),
-            Brilho = 2.02,
-            ForcaLuz = 0.4,
-            LuzesAtivas = true
-        }
-    else
-        config = {
-            Ambient = Color3.fromRGB(195, 195, 195),
-            Outdoor = Color3.fromRGB(100, 100, 100),
-            Brilho = 2,
-            ForcaLuz = 0.4,
-            LuzesAtivas = false
-        }
-    end
-
-    -- ILUMINAÇÃO
-
-    Lighting.Ambient = config.Ambient
-    Lighting.OutdoorAmbient = config.Outdoor
-    Lighting.ColorShift_Bottom = Color3.fromRGB(0, 0, 0)
-    Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
-    Lighting.Brightness = config.Brilho
-    Lighting.ClockTime = 14
-
-    pcall(function()
-        Lighting.Technology = Enum.Technology.Voxel
-    end)
-
-    -- RAYCAST DOS TETOS
-
-    task.spawn(function()
-
-        local params = RaycastParams.new()
-        params.FilterDescendantsInstances = {character}
-        params.FilterType = Enum.RaycastFilterType.Exclude
-
-        local origemBase = hrp.Position
-        local direcao = Vector3.new(0, ALTURA, 0)
-
-        local tetosEncontrados = {}
-        local contador = 0
-
-        for x = -RAIO_GRADE, RAIO_GRADE, ESPACO do
-            for z = -RAIO_GRADE, RAIO_GRADE, ESPACO do
-
-                local origem = origemBase + Vector3.new(x, 0, z)
-                local result = workspace:Raycast(origem, direcao, params)
-
-                if result and result.Instance:IsA("BasePart") then
-                    local teto = result.Instance
-
-                    if not tetosEncontrados[teto] then
-                        tetosEncontrados[teto] = true
-                        teto.CastShadow = false
-                    end
-                end
-
-                contador += 1
-
-                if contador % 100 == 0 then
-                    task.wait(INTERVALO_BUSCA)
-                end
-            end
-        end
-    end)
-
-    -- LUZES
-
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("Light") then
-
-            if config.LuzesAtivas then
-                obj.Enabled = true
-                obj.Brightness = config.ForcaLuz
-            else
-                obj.Enabled = false
-                obj.Brightness = config.ForcaLuz
-            end
-
-        end
-    end
-end
-
-quality1.MouseButton1Click:Connect(function()
-    aplicarQualidade(1)
-end)
-
-quality2.MouseButton1Click:Connect(function()
-    aplicarQualidade(2)
-end)
-
---========================================================
--- MINIMIZAR EM BOLA
---========================================================
-
-local bubble = Instance.new("TextButton")
-bubble.Size = UDim2.fromOffset(65, 65)
-bubble.Position = main.Position
-bubble.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-bubble.Text = "OLD"
-bubble.TextColor3 = Color3.new(1, 1, 1)
-bubble.TextSize = 17
-bubble.Font = Enum.Font.GothamBold
-bubble.Visible = false
-bubble.Active = true
-bubble.Parent = gui
-
-local bubbleCorner = Instance.new("UICorner")
-bubbleCorner.CornerRadius = UDim.new(1, 0)
-bubbleCorner.Parent = bubble
-
-local bubbleStroke = Instance.new("UIStroke")
-bubbleStroke.Color = Color3.new(1, 1, 1)
-bubbleStroke.Thickness = 2
-bubbleStroke.Parent = bubble
+local ballStroke = Instance.new("UIStroke",ball)
+ballStroke.Color = Color3.new(1,1,1)
+ballStroke.Thickness = 1.5
 
 minimize.MouseButton1Click:Connect(function()
-    bubble.Position = main.Position
-    main.Visible = false
-    bubble.Visible = true
+	main.Visible = false
+	ball.Visible = true
 end)
 
-bubble.MouseButton1Click:Connect(function()
-    main.Position = bubble.Position
-    bubble.Visible = false
-    main.Visible = true
+ball.MouseButton1Click:Connect(function()
+	ball.Visible = false
+	main.Visible = true
 end)
 
 --========================================================
--- SISTEMA DE ARRASTAR
+-- ARRASTAR
 --========================================================
 
-local function tornarArrastavel(objeto)
+local function arrastar(obj)
+	local dragging = false
+	local dragStart
+	local startPos
+	local dragInput
 
-    local dragging = false
-    local dragStart
-    local startPos
+	obj.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = obj.Position
 
-    objeto.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1
-        or input.UserInputType == Enum.UserInputType.Touch then
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
 
-            dragging = true
-            dragStart = input.Position
-            startPos = objeto.Position
+	obj.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement
+		or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
 
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-
-    UIS.InputChanged:Connect(function(input)
-        if dragging then
-            if input.UserInputType == Enum.UserInputType.MouseMovement
-            or input.UserInputType == Enum.UserInputType.Touch then
-
-                local delta = input.Position - dragStart
-
-                objeto.Position = UDim2.new(
-                    startPos.X.Scale,
-                    startPos.X.Offset + delta.X,
-                    startPos.Y.Scale,
-                    startPos.Y.Offset + delta.Y
-                )
-            end
-        end
-    end)
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input == dragInput then
+			local delta = input.Position - dragStart
+			obj.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
 end
 
-tornarArrastavel(header)
-tornarArrastavel(bubble)
+arrastar(main)
+arrastar(ball)
 
-print("[OLD] Painel iniciado!")
+--========================================================
+-- BOTÃO 2024 QUALITY 1
+-- SCRIPT ORIGINAL COMPLETO
+--========================================================
+
+quality1.MouseButton1Click:Connect(function()
+
+	local player = game.Players.LocalPlayer
+	local character = player.Character or player.CharacterAdded:Wait()
+	local hrp = character:WaitForChild("HumanoidRootPart")
+
+	local ALTURA = 40
+	local RAIO_GRADE = 1400
+	local ESPACO = 4
+	local INTERVALO_BUSCA = 3
+
+	local TECNOLOGIA_VOXEL = true
+	local AMBIENT_COLOR = Color3.fromRGB(190, 190, 190)
+	local OUTDOOR_AMBIENT = Color3.fromRGB(85, 85, 85)
+	local COLOR_SHIFT_BOTTOM = Color3.fromRGB(0, 0, 0)
+	local COLOR_SHIFT_TOP = Color3.fromRGB(255, 255, 255)
+
+	local Lighting = game:GetService("Lighting")
+
+	Lighting.Ambient = AMBIENT_COLOR
+	Lighting.OutdoorAmbient = OUTDOOR_AMBIENT
+	Lighting.ColorShift_Bottom = COLOR_SHIFT_BOTTOM
+	Lighting.ColorShift_Top = COLOR_SHIFT_TOP
+
+	if TECNOLOGIA_VOXEL then
+		pcall(function()
+			Lighting.Technology = Enum.Technology.Voxel
+		end)
+	end
+
+	local params = RaycastParams.new()
+	params.FilterDescendantsInstances = {character}
+	params.FilterType = Enum.RaycastFilterType.Exclude
+
+	local origemBase = hrp.Position
+	local direcao = Vector3.new(0, ALTURA, 0)
+
+	local tetosEncontrados = {}
+	local contador = 0
+
+	for x = -RAIO_GRADE, RAIO_GRADE, ESPACO do
+		for z = -RAIO_GRADE, RAIO_GRADE, ESPACO do
+			local origem = origemBase + Vector3.new(x, 0, z)
+			local result = workspace:Raycast(origem, direcao, params)
+
+			if result and result.Instance:IsA("BasePart") then
+				local teto = result.Instance
+
+				if not tetosEncontrados[teto] then
+					tetosEncontrados[teto] = true
+					teto.CastShadow = false
+				end
+			end
+
+			contador += 1
+			if contador % 100 == 0 then
+				task.wait(INTERVALO_BUSCA)
+			end
+		end
+	end
+
+	local FORCA_LUZ = 0.4
+	local BRILHO_SOL = 2.02
+	local HORARIO = 14
+
+	Lighting.Brightness = BRILHO_SOL
+	Lighting.ClockTime = HORARIO
+
+	for _, obj in ipairs(workspace:GetDescendants()) do
+		if obj:IsA("Light") then
+			if FORCA_LUZ <= 0 then
+				obj.Enabled = false
+			else
+				obj.Enabled = true
+				obj.Brightness = FORCA_LUZ
+			end
+		end
+	end
+
+end)
+
+--========================================================
+-- BOTÃO 2024 QUALITY 2
+-- SCRIPT ORIGINAL COMPLETO
+--========================================================
+
+quality2.MouseButton1Click:Connect(function()
+
+	local player = game.Players.LocalPlayer
+	local character = player.Character or player.CharacterAdded:Wait()
+	local hrp = character:WaitForChild("HumanoidRootPart")
+
+	local ALTURA = 40
+	local RAIO_GRADE = 1400
+	local ESPACO = 4
+	local INTERVALO_BUSCA = 3
+
+	local TECNOLOGIA_VOXEL = true
+	local AMBIENT_COLOR = Color3.fromRGB(195, 195, 195)
+	local OUTDOOR_AMBIENT = Color3.fromRGB(100, 100, 100)
+	local COLOR_SHIFT_BOTTOM = Color3.fromRGB(0, 0, 0)
+	local COLOR_SHIFT_TOP = Color3.fromRGB(255, 255, 255)
+
+	local Lighting = game:GetService("Lighting")
+
+	Lighting.Ambient = AMBIENT_COLOR
+	Lighting.OutdoorAmbient = OUTDOOR_AMBIENT
+	Lighting.ColorShift_Bottom = COLOR_SHIFT_BOTTOM
+	Lighting.ColorShift_Top = COLOR_SHIFT_TOP
+
+	if TECNOLOGIA_VOXEL then
+		pcall(function()
+			Lighting.Technology = Enum.Technology.Voxel
+		end)
+	end
+
+	local params = RaycastParams.new()
+	params.FilterDescendantsInstances = {character}
+	params.FilterType = Enum.RaycastFilterType.Exclude
+
+	local origemBase = hrp.Position
+	local direcao = Vector3.new(0, ALTURA, 0)
+
+	local tetosEncontrados = {}
+	local contador = 0
+
+	for x = -RAIO_GRADE, RAIO_GRADE, ESPACO do
+		for z = -RAIO_GRADE, RAIO_GRADE, ESPACO do
+			local origem = origemBase + Vector3.new(x, 0, z)
+			local result = workspace:Raycast(origem, direcao, params)
+
+			if result and result.Instance:IsA("BasePart") then
+				local teto = result.Instance
+
+				if not tetosEncontrados[teto] then
+					tetosEncontrados[teto] = true
+					teto.CastShadow = false
+				end
+			end
+
+			contador += 1
+			if contador % 100 == 0 then
+				task.wait(INTERVALO_BUSCA)
+			end
+		end
+	end
+
+	local FORCA_LUZ = 0.4
+	local BRILHO_SOL = 2
+	local HORARIO = 14
+
+	Lighting.Brightness = BRILHO_SOL
+	Lighting.ClockTime = HORARIO
+
+	for _, obj in ipairs(workspace:GetDescendants()) do
+		if obj:IsA("Light") then
+			if FORCA_LUZ <= 0 then
+				obj.Enabled = false
+			else
+				obj.Enabled = false
+				obj.Brightness = FORCA_LUZ
+			end
+		end
+	end
+
+end)
+
+print("[SHADOW HUB OLD] Carregado!")
